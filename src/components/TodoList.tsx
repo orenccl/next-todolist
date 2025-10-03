@@ -15,6 +15,7 @@ import {
 export default function TodoList() {
   const [todos, setTodos] = useState<TodoItemType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingTodo, setEditingTodo] = useState<TodoItemType | null>(null);
@@ -58,7 +59,7 @@ export default function TodoList() {
   // 載入 todos
   const loadTodos = useCallback(async () => {
     try {
-      setLoading(true);
+      setDataLoading(true);
       setError(null);
 
       const params = new URLSearchParams({
@@ -97,7 +98,7 @@ export default function TodoList() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
-      setLoading(false);
+      setDataLoading(false);
     }
   }, [filters, pagination.page, pagination.limit]);
 
@@ -106,10 +107,13 @@ export default function TodoList() {
     const initialize = async () => {
       const auth = await checkAuth();
       if (auth) {
+        // 認證成功，開始載入資料
         loadTodos();
       } else {
-        setLoading(false);
+        // 未認證，停止資料載入
+        setDataLoading(false);
       }
+      setLoading(false); // 無論是否認證，都結束初始載入
     };
     initialize();
   }, [loadTodos]);
@@ -127,6 +131,7 @@ export default function TodoList() {
       const auth = await checkAuth();
       if (auth && !isAuthenticated) {
         // 用戶剛剛登入，重新載入 todos
+        setDataLoading(true);
         loadTodos();
       }
     };
@@ -281,24 +286,6 @@ export default function TodoList() {
     setPagination(prev => ({ ...prev, page }));
   };
 
-  if (loading && todos.length === 0) {
-    return (
-      <div className="flex justify-center items-center p-8">
-        <div className="text-lg">載入中...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">🔐</div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">請先登入</h3>
-        <p className="text-gray-500">登入後即可開始管理您的待辦事項</p>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* 篩選器卡片 */}
@@ -364,7 +351,7 @@ export default function TodoList() {
               description: editingTodo.description || undefined,
               deadline: editingTodo.deadline
                 ? new Date(editingTodo.deadline).toISOString().split('T')[0]
-                : undefined
+                : undefined,
             }}
             isEditing={true}
           />
@@ -373,34 +360,43 @@ export default function TodoList() {
 
       {/* Todo 列表容器 */}
       <div className="bg-white rounded-lg shadow-lg border p-6">
-        <div className="space-y-4">
-          {todos.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">📋</div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                還沒有待辦事項
-              </h3>
-              <p className="text-gray-500 mb-4">開始建立您的第一個任務吧！</p>
-              <button
-                onClick={() => setShowForm(true)}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                ➕ 立即新增
-              </button>
+        {dataLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <span className="text-lg text-gray-600">載入資料中...</span>
             </div>
-          ) : (
-            todos.map(todo => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onUpdate={handleUpdateTodo}
-                onDelete={handleDeleteTodo}
-                onToggle={handleToggleTodo}
-                onEdit={setEditingTodo}
-              />
-            ))
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {todos.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">📋</div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  還沒有待辦事項
+                </h3>
+                <p className="text-gray-500 mb-4">開始建立您的第一個任務吧！</p>
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  ➕ 立即新增
+                </button>
+              </div>
+            ) : (
+              todos.map(todo => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  onUpdate={handleUpdateTodo}
+                  onDelete={handleDeleteTodo}
+                  onToggle={handleToggleTodo}
+                  onEdit={setEditingTodo}
+                />
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {/* 分頁 */}
