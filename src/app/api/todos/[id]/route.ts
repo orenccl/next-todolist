@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
-import { Priority, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 /**
  * 獲取單個 todo
@@ -9,16 +9,17 @@ import { Priority, Prisma } from '@prisma/client';
  * @param params 參數
  * @returns 單個 todo
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const todo = await prisma.todo.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.userId,
       },
     });
@@ -40,20 +41,21 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * @param params 參數
  * @returns 更新後的 todo
  */
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { title, description, priority, deadline, isDone } = body;
 
     // 檢查 todo 是否存在且屬於當前用戶
     const existingTodo = await prisma.todo.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.userId,
       },
     });
@@ -93,7 +95,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (isDone !== undefined) updateData.isDone = isDone;
 
     const updatedTodo = await prisma.todo.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     });
 
@@ -110,17 +112,18 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
  * @param params 參數
  * @returns 刪除成功或失敗
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     // 檢查 todo 是否存在且屬於當前用戶
     const existingTodo = await prisma.todo.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.userId,
       },
     });
@@ -130,7 +133,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     await prisma.todo.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Todo deleted successfully' });

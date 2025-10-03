@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && prisma db push && next build --turbopack",
+    "build:local": "prisma generate && dotenv -e .env.local -- prisma db push && next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "db:push": "dotenv -e .env.local -- prisma db push",
+    "db:push": "prisma db push",
+    "db:push:local": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "prisma migrate deploy"
   },
   "dependencies": {
