@@ -44,12 +44,6 @@ export default function AuthContainer({ onLogin }: AuthContainerProps) {
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    // 觸發認證狀態變化事件
-    window.dispatchEvent(new CustomEvent('authStateChanged'));
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">

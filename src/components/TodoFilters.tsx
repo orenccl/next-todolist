@@ -1,6 +1,7 @@
 'use client';
 
-import { TodoFiltersProps, Priority } from '@/types/frontend';
+import { TodoFiltersProps } from '@/types/frontend';
+import { Priority } from '@/types/todo';
 
 const priorityOptions: { value: Priority | 'ALL'; label: string }[] = [
   { value: 'ALL', label: '全部' },
@@ -46,8 +47,12 @@ export default function TodoFilters({
     <div className="bg-white rounded-lg shadow-lg border p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-1">🔍 篩選與排序</h3>
-          <p className="text-sm text-gray-600">使用篩選器快速找到您需要的任務</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-1">
+            🔍 篩選與排序
+          </h3>
+          <p className="text-sm text-gray-600">
+            使用篩選器快速找到您需要的任務
+          </p>
         </div>
         {hasActiveFilters && (
           <button

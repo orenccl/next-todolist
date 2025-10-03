@@ -17,7 +17,6 @@ const priorityLabels = {
 
 export default function TodoItem({
   todo,
-  onUpdate,
   onDelete,
   onToggle,
   onEdit,

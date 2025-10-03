@@ -1,11 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { UserPublic } from '@/types/auth';
-
-interface UserPanelProps {
-  user: UserPublic;
-}
 
 interface TodoStatsData {
   period: string;
@@ -28,7 +23,7 @@ interface TodoStatsData {
   }>;
 }
 
-export default function UserPanel({ user }: UserPanelProps) {
+export default function UserPanel() {
   const [stats, setStats] = useState<TodoStatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
