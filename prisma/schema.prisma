@@ -20,4 +20,35 @@ model User {
   name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relationship with todos
+  todos     Todo[]
+}
+
+model Todo {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  priority    Priority @default(MEDIUM)
+  deadline    DateTime?
+  isDone      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign key relationship
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("todos")
+
+  @@index([userId])
+  @@index([userId, isDone])
+  @@index([userId, priority])
+  @@index([userId, deadline])
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
 }
