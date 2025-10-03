@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { setSession } from '@/lib/session';
 import { hashPassword } from '@/lib/password';
 import { createInitialTodos } from '@/lib/initial-todos';
+import { RegisterInput, AuthResponse } from '@/types/auth';
 
 /**
  * 註冊
@@ -11,7 +12,7 @@ import { createInitialTodos } from '@/lib/initial-todos';
  */
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name } = await request.json();
+    const { email, password, name }: RegisterInput = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -54,13 +55,17 @@ export async function POST(request: NextRequest) {
     // 創建初始待辦事項
     const initialTodosCount = await createInitialTodos(user.id);
 
-    return NextResponse.json({
+    const response: AuthResponse = {
       success: true,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
+        name: user.name || undefined,
       },
+    };
+
+    return NextResponse.json({
+      ...response,
       initialTodosCount,
     });
   } catch (error) {

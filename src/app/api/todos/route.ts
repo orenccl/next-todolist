@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
-import { Priority, Prisma } from '@prisma/client';
+import {
+  Priority,
+  TodoResponse,
+  PaginatedResponse,
+  CreateTodoInput,
+  SortBy,
+  SortOrder,
+} from '@/types/todo';
+import { Prisma } from '@prisma/client';
 
 /**
  * 獲取 todos
@@ -23,8 +31,8 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // 排序參數
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const sortBy = (searchParams.get('sortBy') || 'createdAt') as SortBy;
+    const sortOrder = (searchParams.get('sortOrder') || 'desc') as SortOrder;
 
     // 篩選參數
     const priority = searchParams.get('priority') as Priority | null;
@@ -91,20 +99,18 @@ export async function GET(request: NextRequest) {
 
     // 計算分頁信息
     const totalPages = Math.ceil(total / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
 
-    return NextResponse.json({
-      data: todos,
+    const response: PaginatedResponse<TodoResponse> = {
+      data: todos as TodoResponse[],
       pagination: {
         page,
         limit,
         total,
         totalPages,
-        hasNextPage,
-        hasPrevPage,
       },
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching todos:', error);
     return NextResponse.json(
@@ -126,7 +132,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body: CreateTodoInput = await request.json();
     const { title, description, priority, deadline } = body;
 
     // 驗證必填字段
@@ -164,7 +170,19 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(todo, { status: 201 });
+    const todoResponse: TodoResponse = {
+      id: todo.id,
+      title: todo.title,
+      description: todo.description,
+      priority: todo.priority,
+      deadline: todo.deadline,
+      isDone: todo.isDone,
+      createdAt: todo.createdAt,
+      updatedAt: todo.updatedAt,
+      userId: todo.userId,
+    };
+
+    return NextResponse.json(todoResponse, { status: 201 });
   } catch (error) {
     console.error('Error creating todo:', error);
     return NextResponse.json(

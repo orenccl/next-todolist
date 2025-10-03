@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { BulkActionInput } from '@/types/todo';
 
 /**
  * 批量操作
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body: BulkActionInput = await request.json();
     const { action, todoIds } = body;
 
     if (!action || !Array.isArray(todoIds) || todoIds.length === 0) {

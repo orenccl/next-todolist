@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { clearSession } from '@/lib/session';
+import { AuthResponse } from '@/types/auth';
 
 /**
  * 登出
@@ -9,10 +10,12 @@ export async function POST() {
   try {
     await clearSession();
 
-    return NextResponse.json({
+    const response: AuthResponse = {
       success: true,
       message: 'Logged out successfully',
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Logout error:', error);
     return NextResponse.json(

@@ -4,15 +4,10 @@ import { useState, useEffect } from 'react';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import UserInfo from './UserInfo';
-
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-}
+import { UserPublic } from '@/types/auth';
 
 export default function AuthContainer() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserPublic | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
 
@@ -36,7 +31,7 @@ export default function AuthContainer() {
     }
   };
 
-  const handleLogin = (userData: User) => {
+  const handleLogin = (userData: UserPublic) => {
     setUser(userData);
   };
 

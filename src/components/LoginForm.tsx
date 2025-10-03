@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-interface LoginFormProps {
-  onLogin: (user: { id: string; email: string; name?: string }) => void;
-}
+import { LoginFormProps } from '@/types/components';
 
 export default function LoginForm({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');

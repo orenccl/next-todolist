@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-interface UserInfoProps {
-  user: { id: string; email: string; name?: string };
-  onLogout: () => void;
-}
+import { UserInfoProps } from '@/types/components';
 
 export default function UserInfo({ user, onLogout }: UserInfoProps) {
   const [loading, setLoading] = useState(false);

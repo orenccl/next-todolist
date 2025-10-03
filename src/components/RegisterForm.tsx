@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-interface RegisterFormProps {
-  onRegister: (user: { id: string; email: string; name?: string }) => void;
-}
+import { RegisterFormProps } from '@/types/components';
 
 export default function RegisterForm({ onRegister }: RegisterFormProps) {
   const [email, setEmail] = useState('');

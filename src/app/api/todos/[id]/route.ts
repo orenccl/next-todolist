@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { TodoResponse, UpdateTodoInput } from '@/types/todo';
 import { Prisma } from '@prisma/client';
 
 /**
@@ -58,7 +59,7 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const body = await request.json();
+    const body: UpdateTodoInput = await request.json();
     const { title, description, priority, deadline, isDone } = body;
 
     // 檢查 todo 是否存在且屬於當前用戶
@@ -118,7 +119,19 @@ export async function PUT(
       data: updateData,
     });
 
-    return NextResponse.json(updatedTodo);
+    const todoResponse: TodoResponse = {
+      id: updatedTodo.id,
+      title: updatedTodo.title,
+      description: updatedTodo.description,
+      priority: updatedTodo.priority,
+      deadline: updatedTodo.deadline,
+      isDone: updatedTodo.isDone,
+      createdAt: updatedTodo.createdAt,
+      updatedAt: updatedTodo.updatedAt,
+      userId: updatedTodo.userId,
+    };
+
+    return NextResponse.json(todoResponse);
   } catch (error) {
     console.error('Error updating todo:', error);
     return NextResponse.json(

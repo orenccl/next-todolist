@@ -1,14 +1,5 @@
 import { prisma } from './prisma';
-
-export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
-
-export interface InitialTodoData {
-  title: string;
-  description: string | null;
-  priority: Priority;
-  deadline: Date | null;
-  isDone: boolean;
-}
+import { InitialTodoData } from '@/types/todo';
 
 /**
  * 初始待辦事項數據

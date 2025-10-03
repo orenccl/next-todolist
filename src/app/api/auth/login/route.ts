@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { setSession } from '@/lib/session';
 import { verifyPassword } from '@/lib/password';
+import { LoginInput, AuthResponse } from '@/types/auth';
 
 /**
  * 登入
@@ -10,7 +11,7 @@ import { verifyPassword } from '@/lib/password';
  */
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { email, password }: LoginInput = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -47,14 +48,16 @@ export async function POST(request: NextRequest) {
       name: user.name || undefined,
     });
 
-    return NextResponse.json({
+    const response: AuthResponse = {
       success: true,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
+        name: user.name || undefined,
       },
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
