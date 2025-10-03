@@ -190,7 +190,7 @@ export default function Home() {
                 查看您的統計數據和個人信息
               </p>
             </div>
-            <UserPanel user={user} />
+            <UserPanel />
           </div>
         )}
       </div>
