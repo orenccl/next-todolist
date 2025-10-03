@@ -2,6 +2,8 @@
 
 一個功能完整的待辦事項管理應用程式，使用 Next.js 15、TypeScript、Prisma 和 PostgreSQL 建構。
 
+🌐 **線上預覽**: [https://next-todolist-zeta.vercel.app/](https://next-todolist-zeta.vercel.app/)
+
 ## 🚀 功能特色
 
 ### 身份驗證系統
