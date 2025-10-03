@@ -9,9 +9,3 @@ export interface LoginFormProps {
 export interface RegisterFormProps {
   onRegister: (user: UserPublic) => void;
 }
-
-// 用戶資訊 Props
-export interface UserInfoProps {
-  user: UserPublic;
-  onLogout: () => void;
-}
