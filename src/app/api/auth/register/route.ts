@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { setSession } from '@/lib/session';
 import { hashPassword } from '@/lib/password';
+import { createInitialTodos } from '@/lib/initial-todos';
 
 /**
  * 註冊
@@ -13,7 +14,10 @@ export async function POST(request: NextRequest) {
     const { email, password, name } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      );
     }
 
     // 檢查用戶是否已存在
@@ -22,7 +26,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'User already exists' },
+        { status: 409 }
+      );
     }
 
     // 加密密碼
@@ -44,6 +51,9 @@ export async function POST(request: NextRequest) {
       name: user.name || undefined,
     });
 
+    // 創建初始待辦事項
+    const initialTodosCount = await createInitialTodos(user.id);
+
     return NextResponse.json({
       success: true,
       user: {
@@ -51,9 +61,13 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
       },
+      initialTodosCount,
     });
   } catch (error) {
     console.error('Register error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
