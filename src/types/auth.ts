@@ -21,7 +21,7 @@ export interface SessionData {
 export interface RegisterInput {
   email: string;
   password: string;
-  name?: string;
+  name: string;
 }
 
 // 登入輸入型別

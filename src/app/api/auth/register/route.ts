@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password, name }: RegisterInput = await request.json();
 
-    if (!email || !password) {
+    if (!email || !password || !name) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Email, password, and name are required' },
         { status: 400 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       data: {
         email,
         password: hashedPassword,
-        name: name || null,
+        name: name,
       },
     });
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     await setSession({
       userId: user.id,
       email: user.email,
-      name: user.name || undefined,
+      name: user.name,
     });
 
     // 創建初始待辦事項
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name || undefined,
+        name: user.name,
       },
     };
 

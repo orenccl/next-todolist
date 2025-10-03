@@ -45,7 +45,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           htmlFor="name"
           className="block text-sm font-medium text-gray-700"
         >
-          👤 姓名（可選）
+          👤 姓名
         </label>
         <input
           type="text"
