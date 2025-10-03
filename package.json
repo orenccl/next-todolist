@@ -8,6 +8,8 @@
     "build:local": "prisma generate && dotenv -e .env.local -- prisma db push && next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:push:local": "dotenv -e .env.local -- prisma db push",
@@ -31,6 +33,7 @@
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -35,7 +35,14 @@ export async function GET(request: NextRequest) {
     };
 
     // 並行執行多個統計查詢
-    const [totalTodos, completedTodos, pendingTodos, overdueTodos, priorityStats, recentTodos] = await Promise.all([
+    const [
+      totalTodos,
+      completedTodos,
+      pendingTodos,
+      overdueTodos,
+      priorityStats,
+      recentTodos,
+    ] = await Promise.all([
       // 總數
       prisma.todo.count({ where: baseWhere }),
 
@@ -81,13 +88,17 @@ export async function GET(request: NextRequest) {
     ]);
 
     // 計算完成率
-    const completionRate = totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
+    const completionRate =
+      totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
 
     // 格式化優先級統計
-    const priorityBreakdown = priorityStats.reduce((acc, stat) => {
-      acc[stat.priority.toLowerCase()] = stat._count;
-      return acc;
-    }, {} as Record<string, number>);
+    const priorityBreakdown = priorityStats.reduce(
+      (acc, stat) => {
+        acc[stat.priority.toLowerCase()] = stat._count;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return NextResponse.json({
       period,
@@ -105,6 +116,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching todo stats:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

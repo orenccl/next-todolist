@@ -64,11 +64,18 @@ export async function GET(request: NextRequest) {
     }
 
     // 構建排序條件
-    const validSortFields = ['createdAt', 'title', 'priority', 'deadline', 'isDone'];
+    const validSortFields = [
+      'createdAt',
+      'title',
+      'priority',
+      'deadline',
+      'isDone',
+    ];
     const orderBy: Prisma.TodoOrderByWithRelationInput = {};
 
     if (validSortFields.includes(sortBy)) {
-      orderBy[sortBy as keyof Prisma.TodoOrderByWithRelationInput] = sortOrder as 'asc' | 'desc';
+      orderBy[sortBy as keyof Prisma.TodoOrderByWithRelationInput] =
+        sortOrder as 'asc' | 'desc';
     }
 
     // 執行查詢
@@ -100,7 +107,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching todos:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -126,7 +136,10 @@ export async function POST(request: NextRequest) {
 
     // 驗證優先級
     if (priority && !['LOW', 'MEDIUM', 'HIGH'].includes(priority)) {
-      return NextResponse.json({ error: 'Invalid priority. Must be LOW, MEDIUM, or HIGH' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid priority. Must be LOW, MEDIUM, or HIGH' },
+        { status: 400 }
+      );
     }
 
     // 驗證截止日期
@@ -134,7 +147,10 @@ export async function POST(request: NextRequest) {
     if (deadline) {
       deadlineDate = new Date(deadline);
       if (isNaN(deadlineDate.getTime())) {
-        return NextResponse.json({ error: 'Invalid deadline format' }, { status: 400 });
+        return NextResponse.json(
+          { error: 'Invalid deadline format' },
+          { status: 400 }
+        );
       }
     }
 
@@ -151,6 +167,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(todo, { status: 201 });
   } catch (error) {
     console.error('Error creating todo:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

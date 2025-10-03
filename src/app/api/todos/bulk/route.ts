@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
     const { action, todoIds } = body;
 
     if (!action || !Array.isArray(todoIds) || todoIds.length === 0) {
-      return NextResponse.json({ error: 'Action and todoIds are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Action and todoIds are required' },
+        { status: 400 }
+      );
     }
 
     // 驗證所有 todo 都屬於當前用戶
@@ -31,7 +34,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (todos.length !== todoIds.length) {
-      return NextResponse.json({ error: 'Some todos not found or not accessible' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Some todos not found or not accessible' },
+        { status: 400 }
+      );
     }
 
     let result;
@@ -58,7 +64,10 @@ export async function POST(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action. Supported actions: markComplete, markIncomplete, delete' },
+          {
+            error:
+              'Invalid action. Supported actions: markComplete, markIncomplete, delete',
+          },
           { status: 400 }
         );
     }
@@ -69,6 +78,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error in bulk operation:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

@@ -13,7 +13,10 @@ export async function POST(request: NextRequest) {
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      );
     }
 
     // 查找用戶
@@ -22,13 +25,19 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
     // 驗證密碼
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
     // 設置 session
@@ -48,6 +57,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

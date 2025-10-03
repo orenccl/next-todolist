@@ -9,7 +9,10 @@ import { Prisma } from '@prisma/client';
  * @param params 參數
  * @returns 單個 todo
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getSession();
     if (!session) {
@@ -31,7 +34,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(todo);
   } catch (error) {
     console.error('Error fetching todo:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -41,7 +47,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
  * @param params 參數
  * @returns 更新後的 todo
  */
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getSession();
     if (!session) {
@@ -66,11 +75,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // 驗證字段
     if (title !== undefined && (!title || title.trim() === '')) {
-      return NextResponse.json({ error: 'Title cannot be empty' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Title cannot be empty' },
+        { status: 400 }
+      );
     }
 
     if (priority && !['LOW', 'MEDIUM', 'HIGH'].includes(priority)) {
-      return NextResponse.json({ error: 'Invalid priority. Must be LOW, MEDIUM, or HIGH' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid priority. Must be LOW, MEDIUM, or HIGH' },
+        { status: 400 }
+      );
     }
 
     // 驗證截止日期
@@ -81,7 +96,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       } else {
         deadlineDate = new Date(deadline);
         if (isNaN(deadlineDate.getTime())) {
-          return NextResponse.json({ error: 'Invalid deadline format' }, { status: 400 });
+          return NextResponse.json(
+            { error: 'Invalid deadline format' },
+            { status: 400 }
+          );
         }
       }
     }
@@ -89,7 +107,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // 構建更新數據
     const updateData: Prisma.TodoUpdateInput = {};
     if (title !== undefined) updateData.title = title.trim();
-    if (description !== undefined) updateData.description = description?.trim() || null;
+    if (description !== undefined)
+      updateData.description = description?.trim() || null;
     if (priority !== undefined) updateData.priority = priority;
     if (deadline !== undefined) updateData.deadline = deadlineDate;
     if (isDone !== undefined) updateData.isDone = isDone;
@@ -102,7 +121,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(updatedTodo);
   } catch (error) {
     console.error('Error updating todo:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -112,7 +134,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
  * @param params 參數
  * @returns 刪除成功或失敗
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getSession();
     if (!session) {
@@ -139,6 +164,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     return NextResponse.json({ message: 'Todo deleted successfully' });
   } catch (error) {
     console.error('Error deleting todo:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
