@@ -2,3 +2,4 @@
 export * from './auth';
 export * from './todo';
 export * from './components';
+export * from './frontend';

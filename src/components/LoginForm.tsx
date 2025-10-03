@@ -44,7 +44,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
           htmlFor="email"
           className="block text-sm font-medium text-gray-700"
         >
-          Email
+          📧 電子郵件
         </label>
         <input
           type="email"
@@ -60,7 +60,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
           htmlFor="password"
           className="block text-sm font-medium text-gray-700"
         >
-          Password
+          🔒 密碼
         </label>
         <input
           type="password"
@@ -77,7 +77,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
         disabled={loading}
         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
       >
-        {loading ? '登入中...' : '登入'}
+        {loading ? '🔄 登入中...' : '🚀 登入'}
       </button>
     </form>
   );

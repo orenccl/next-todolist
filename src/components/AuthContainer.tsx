@@ -33,16 +33,23 @@ export default function AuthContainer() {
 
   const handleLogin = (userData: UserPublic) => {
     setUser(userData);
+    // 觸發認證狀態變化事件
+    window.dispatchEvent(new CustomEvent('authStateChanged'));
   };
 
   const handleLogout = () => {
     setUser(null);
+    // 觸發認證狀態變化事件
+    window.dispatchEvent(new CustomEvent('authStateChanged'));
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <div className="text-lg">載入中...</div>
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600"></div>
+          <span className="text-lg text-gray-600">載入中...</span>
+        </div>
       </div>
     );
   }
@@ -53,28 +60,41 @@ export default function AuthContainer() {
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="mb-4">
-          <button
-            onClick={() => setShowRegister(false)}
-            className={`px-4 py-2 mr-2 rounded-md ${
-              !showRegister
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            登入
-          </button>
-          <button
-            onClick={() => setShowRegister(true)}
-            className={`px-4 py-2 rounded-md ${
-              showRegister
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            註冊
-          </button>
+      <div className="bg-white p-6 rounded-lg shadow-lg border">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            {showRegister ? '🎉 加入我們' : '👋 歡迎回來'}
+          </h2>
+          <p className="text-gray-600">
+            {showRegister
+              ? '建立帳戶，開始管理您的待辦事項'
+              : '登入您的帳戶，繼續管理任務'}
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setShowRegister(false)}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                !showRegister
+                  ? 'bg-white text-indigo-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              登入
+            </button>
+            <button
+              onClick={() => setShowRegister(true)}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                showRegister
+                  ? 'bg-white text-indigo-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              註冊
+            </button>
+          </div>
         </div>
 
         {showRegister ? (

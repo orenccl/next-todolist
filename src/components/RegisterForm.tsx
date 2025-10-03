@@ -45,7 +45,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           htmlFor="name"
           className="block text-sm font-medium text-gray-700"
         >
-          Name
+          👤 姓名（可選）
         </label>
         <input
           type="text"
@@ -61,7 +61,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           htmlFor="email"
           className="block text-sm font-medium text-gray-700"
         >
-          Email
+          📧 電子郵件
         </label>
         <input
           type="email"
@@ -77,7 +77,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           htmlFor="password"
           className="block text-sm font-medium text-gray-700"
         >
-          Password
+          🔒 密碼
         </label>
         <input
           type="password"
@@ -94,7 +94,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
         disabled={loading}
         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
       >
-        {loading ? '註冊中...' : '註冊'}
+        {loading ? '🔄 註冊中...' : '🎉 立即註冊'}
       </button>
     </form>
   );
