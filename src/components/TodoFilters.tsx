@@ -151,7 +151,7 @@ export default function TodoFilters({
                   filters.sortOrder === 'asc' ? 'desc' : 'asc'
                 )
               }
-              className="px-3 py-2 border border-purple-300 rounded-md hover:bg-purple-100 transition-colors bg-white"
+              className="px-3 py-2 border border-purple-300 rounded-md hover:bg-purple-100 transition-colors bg-white text-gray-900"
               title={`目前為 ${filters.sortOrder === 'asc' ? '升序' : '降序'}，點擊切換排序方向`}
             >
               {filters.sortOrder === 'asc' ? (

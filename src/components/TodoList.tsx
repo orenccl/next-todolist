@@ -154,8 +154,16 @@ export default function TodoList() {
         throw new Error('Failed to create todo');
       }
 
+      const newTodo = await response.json();
+      
+      // 樂觀更新：將新 todo 添加到列表頂部
+      setTodos(prevTodos => [newTodo.data, ...prevTodos]);
+      setPagination(prev => ({
+        ...prev,
+        total: prev.total + 1
+      }));
+      
       setShowForm(false);
-      loadTodos(); // 重新載入列表
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create todo');
     }
@@ -166,6 +174,21 @@ export default function TodoList() {
     id: string,
     updates: Partial<TodoFormState>
   ) => {
+    // 保存原始狀態以便失敗時恢復
+    const originalTodos = todos;
+    
+    // 樂觀更新：立即更新本地狀態
+    setTodos(prevTodos => 
+      prevTodos.map(todo => 
+        todo.id === id ? { 
+          ...todo, 
+          ...updates, 
+          updatedAt: new Date(),
+          deadline: updates.deadline ? new Date(updates.deadline) : todo.deadline
+        } : todo
+      )
+    );
+
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: 'PUT',
@@ -180,14 +203,23 @@ export default function TodoList() {
       }
 
       setEditingTodo(null);
-      loadTodos(); // 重新載入列表
+      // 成功後不需要重新載入，因為已經樂觀更新了
     } catch (err) {
+      // 如果失敗，恢復原狀態
+      setTodos(originalTodos);
       setError(err instanceof Error ? err.message : 'Failed to update todo');
     }
   };
 
   // 切換完成狀態
   const handleToggleTodo = async (id: string, isDone: boolean) => {
+    // 樂觀更新：立即更新本地狀態
+    setTodos(prevTodos => 
+      prevTodos.map(todo => 
+        todo.id === id ? { ...todo, isDone } : todo
+      )
+    );
+
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: 'PUT',
@@ -201,14 +233,31 @@ export default function TodoList() {
         throw new Error('Failed to toggle todo');
       }
 
-      loadTodos(); // 重新載入列表
+      // 成功後不需要重新載入，因為已經樂觀更新了
     } catch (err) {
+      // 如果失敗，恢復原狀態
+      setTodos(prevTodos => 
+        prevTodos.map(todo => 
+          todo.id === id ? { ...todo, isDone: !isDone } : todo
+        )
+      );
       setError(err instanceof Error ? err.message : 'Failed to toggle todo');
     }
   };
 
   // 刪除 todo
   const handleDeleteTodo = async (id: string) => {
+    // 保存原始狀態以便失敗時恢復
+    const originalTodos = todos;
+    const deletedTodo = todos.find(todo => todo.id === id);
+    
+    // 樂觀更新：立即從列表中移除
+    setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+    setPagination(prev => ({
+      ...prev,
+      total: prev.total - 1
+    }));
+
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: 'DELETE',
@@ -218,8 +267,14 @@ export default function TodoList() {
         throw new Error('Failed to delete todo');
       }
 
-      loadTodos(); // 重新載入列表
+      // 成功後不需要重新載入，因為已經樂觀更新了
     } catch (err) {
+      // 如果失敗，恢復原狀態
+      setTodos(originalTodos);
+      setPagination(prev => ({
+        ...prev,
+        total: prev.total + 1
+      }));
       setError(err instanceof Error ? err.message : 'Failed to delete todo');
     }
   };
@@ -327,7 +382,10 @@ export default function TodoList() {
             onCancel={() => setEditingTodo(null)}
             initialData={{
               ...editingTodo,
-              description: editingTodo.description || undefined
+              description: editingTodo.description || undefined,
+              deadline: editingTodo.deadline
+                ? new Date(editingTodo.deadline).toISOString().split('T')[0]
+                : undefined
             }}
             isEditing={true}
           />
@@ -359,6 +417,7 @@ export default function TodoList() {
                 onUpdate={handleUpdateTodo}
                 onDelete={handleDeleteTodo}
                 onToggle={handleToggleTodo}
+                onEdit={setEditingTodo}
               />
             ))
           )}

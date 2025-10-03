@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { TodoFormProps, Priority } from '@/types/frontend';
+import { useState, useEffect, useRef } from 'react';
+import { TodoFormProps } from '@/types/frontend';
+import { Priority } from '@/types/todo';
 
 const priorityOptions: { value: Priority; label: string }[] = [
   { value: 'LOW', label: '低' },
@@ -24,6 +25,7 @@ export default function TodoForm({
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // 初始化表單數據
   useEffect(() => {
@@ -38,6 +40,13 @@ export default function TodoForm({
       });
     }
   }, [initialData]);
+
+  // 自動聚焦到標題輸入框
+  useEffect(() => {
+    if (titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -72,10 +81,10 @@ export default function TodoForm({
       const submitData = {
         ...formData,
         title: formData.title.trim(),
-        description: formData.description.trim() || null,
+        description: formData.description.trim() || '',
         deadline: formData.deadline
           ? new Date(formData.deadline).toISOString()
-          : null,
+          : '',
       };
 
       await onSubmit(submitData);
@@ -110,6 +119,7 @@ export default function TodoForm({
             標題 *
           </label>
           <input
+            ref={titleInputRef}
             type="text"
             id="title"
             value={formData.title}

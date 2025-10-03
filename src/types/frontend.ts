@@ -44,6 +44,7 @@ export interface TodoItemProps {
   onUpdate: (id: string, updates: Partial<TodoFormState>) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   onToggle: (id: string, isDone: boolean) => Promise<void>;
+  onEdit?: (todo: TodoItem) => void;
 }
 
 // TodoForm 組件 Props

@@ -20,6 +20,7 @@ export default function TodoItem({
   onUpdate,
   onDelete,
   onToggle,
+  onEdit,
 }: TodoItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -143,18 +144,6 @@ export default function TodoItem({
               )}
             </div>
 
-            {/* 建立時間 */}
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs text-gray-500">
-                <span className="font-medium">建立於</span> {formatDate(todo.createdAt)}
-                {new Date(todo.updatedAt).getTime() !==
-                  new Date(todo.createdAt).getTime() && (
-                  <span className="ml-2">
-                    <span className="font-medium">• 更新於</span> {formatDate(todo.updatedAt)}
-                  </span>
-                )}
-              </p>
-            </div>
           </div>
         </div>
 
@@ -162,7 +151,7 @@ export default function TodoItem({
         <div className="flex items-center space-x-3 ml-6">
           {/* 編輯按鈕 */}
           <button
-            onClick={() => onUpdate(todo.id, {})}
+            onClick={() => onEdit?.(todo)}
             className="p-3 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
             title="編輯"
           >
