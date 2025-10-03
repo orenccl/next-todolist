@@ -266,20 +266,30 @@ export default function TodoList() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
+      {/* 篩選器卡片 */}
       <div className="mb-6">
-        {/* 篩選器 */}
         <TodoFilters
           filters={filters}
           onFiltersChange={handleFiltersChange}
           onReset={handleResetFilters}
         />
+      </div>
 
-        {/* 新增按鈕 */}
-        <div className="mt-4">
+      {/* 操作區域卡片 */}
+      <div className="bg-white rounded-lg shadow-lg border mb-6 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              📝 待辦事項管理
+            </h2>
+            <p className="text-sm text-gray-600">
+              管理您的任務，追蹤進度，提高生產力
+            </p>
+          </div>
           <button
             onClick={() => setShowForm(true)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-md hover:shadow-lg"
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             ➕ 新增待辦事項
           </button>
@@ -288,8 +298,14 @@ export default function TodoList() {
 
       {/* 錯誤訊息 */}
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="text-2xl mr-3">⚠️</div>
+            <div>
+              <h3 className="text-sm font-semibold text-red-800">發生錯誤</h3>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -309,63 +325,78 @@ export default function TodoList() {
           <TodoForm
             onSubmit={data => handleUpdateTodo(editingTodo.id, data)}
             onCancel={() => setEditingTodo(null)}
-            initialData={editingTodo}
+            initialData={{
+              ...editingTodo,
+              description: editingTodo.description || undefined
+            }}
             isEditing={true}
           />
         </div>
       )}
 
-      {/* Todo 列表 */}
-      <div className="space-y-4">
-        {todos.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📋</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              還沒有待辦事項
-            </h3>
-            <p className="text-gray-500 mb-4">開始建立您的第一個任務吧！</p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              ➕ 立即新增
-            </button>
-          </div>
-        ) : (
-          todos.map(todo => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onUpdate={handleUpdateTodo}
-              onDelete={handleDeleteTodo}
-              onToggle={handleToggleTodo}
-            />
-          ))
-        )}
+      {/* Todo 列表容器 */}
+      <div className="bg-white rounded-lg shadow-lg border p-6">
+        <div className="space-y-4">
+          {todos.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">📋</div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                還沒有待辦事項
+              </h3>
+              <p className="text-gray-500 mb-4">開始建立您的第一個任務吧！</p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                ➕ 立即新增
+              </button>
+            </div>
+          ) : (
+            todos.map(todo => (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onUpdate={handleUpdateTodo}
+                onDelete={handleDeleteTodo}
+                onToggle={handleToggleTodo}
+              />
+            ))
+          )}
+        </div>
       </div>
 
       {/* 分頁 */}
       {pagination.totalPages > 1 && (
-        <div className="mt-8 flex justify-center space-x-2">
-          <button
-            onClick={() => handlePageChange(pagination.page - 1)}
-            disabled={pagination.page <= 1}
-            className="px-3 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            上一頁
-          </button>
+        <div className="mt-6 bg-white rounded-lg shadow-lg border p-4">
+          <div className="flex justify-center items-center space-x-4">
+            <button
+              onClick={() => handlePageChange(pagination.page - 1)}
+              disabled={pagination.page <= 1}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors font-medium"
+            >
+              ← 上一頁
+            </button>
 
-          <span className="px-3 py-2">
-            第 {pagination.page} 頁，共 {pagination.totalPages} 頁
-          </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">第</span>
+              <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full font-semibold">
+                {pagination.page}
+              </span>
+              <span className="text-sm text-gray-600">頁，共</span>
+              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full font-semibold">
+                {pagination.totalPages}
+              </span>
+              <span className="text-sm text-gray-600">頁</span>
+            </div>
 
-          <button
-            onClick={() => handlePageChange(pagination.page + 1)}
-            disabled={pagination.page >= pagination.totalPages}
-            className="px-3 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            下一頁
-          </button>
+            <button
+              onClick={() => handlePageChange(pagination.page + 1)}
+              disabled={pagination.page >= pagination.totalPages}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors font-medium"
+            >
+              下一頁 →
+            </button>
+          </div>
         </div>
       )}
     </div>

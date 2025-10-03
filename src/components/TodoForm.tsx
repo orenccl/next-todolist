@@ -114,7 +114,7 @@ export default function TodoForm({
             id="title"
             value={formData.title}
             onChange={e => handleChange('title', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 placeholder-gray-500 ${
               errors.title ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="例如：完成專案報告、購買生活用品..."
@@ -138,7 +138,7 @@ export default function TodoForm({
             value={formData.description}
             onChange={e => handleChange('description', e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 placeholder-gray-500"
             placeholder="添加詳細說明、注意事項或相關資訊..."
             disabled={loading}
           />
@@ -158,7 +158,7 @@ export default function TodoForm({
               id="priority"
               value={formData.priority}
               onChange={e => handleChange('priority', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
               disabled={loading}
             >
               {priorityOptions.map(option => (
@@ -182,7 +182,7 @@ export default function TodoForm({
               id="deadline"
               value={formData.deadline}
               onChange={e => handleChange('deadline', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 ${
                 errors.deadline ? 'border-red-500' : 'border-gray-300'
               }`}
               disabled={loading}

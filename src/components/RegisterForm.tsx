@@ -53,7 +53,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           value={name}
           onChange={e => setName(e.target.value)}
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-500"
         />
       </div>
       <div>
@@ -69,7 +69,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-500"
         />
       </div>
       <div>
@@ -85,7 +85,7 @@ export default function RegisterForm({ onRegister }: RegisterFormProps) {
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-500"
         />
       </div>
       {error && <div className="text-red-600 text-sm">{error}</div>}

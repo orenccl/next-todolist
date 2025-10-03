@@ -43,27 +43,30 @@ export default function TodoFilters({
     filters.sortOrder !== 'desc';
 
   return (
-    <div className="bg-gray-50 p-4 rounded-lg border">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-gray-900">🔍 篩選與排序</h3>
+    <div className="bg-white rounded-lg shadow-lg border p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-1">🔍 篩選與排序</h3>
+          <p className="text-sm text-gray-600">使用篩選器快速找到您需要的任務</p>
+        </div>
         {hasActiveFilters && (
           <button
             onClick={onReset}
-            className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
+            className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors font-medium text-sm"
           >
-            重置篩選
+            🔄 重置篩選
           </button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* 搜尋 */}
-        <div>
+        <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
           <label
             htmlFor="search"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-semibold text-blue-800 mb-2"
           >
-            搜尋
+            🔍 搜尋任務
           </label>
           <input
             type="text"
@@ -71,23 +74,23 @@ export default function TodoFilters({
             value={filters.search}
             onChange={e => handleChange('search', e.target.value)}
             placeholder="搜尋任務標題或描述內容..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-500"
           />
         </div>
 
         {/* 優先級 */}
-        <div>
+        <div className="bg-yellow-50 p-4 rounded-lg border-2 border-yellow-200">
           <label
             htmlFor="priority"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-semibold text-yellow-800 mb-2"
           >
-            優先級
+            ⚡ 優先級
           </label>
           <select
             id="priority"
             value={filters.priority}
             onChange={e => handleChange('priority', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white text-gray-900"
           >
             {priorityOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -98,18 +101,18 @@ export default function TodoFilters({
         </div>
 
         {/* 狀態 */}
-        <div>
+        <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
           <label
             htmlFor="status"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-semibold text-green-800 mb-2"
           >
-            狀態
+            📊 狀態
           </label>
           <select
             id="status"
             value={filters.isDone}
             onChange={e => handleChange('isDone', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
           >
             {statusOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -120,19 +123,19 @@ export default function TodoFilters({
         </div>
 
         {/* 排序 */}
-        <div>
+        <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
           <label
             htmlFor="sortBy"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-semibold text-purple-800 mb-2"
           >
-            排序
+            🔄 排序方式
           </label>
           <div className="flex space-x-2">
             <select
               id="sortBy"
               value={filters.sortBy}
               onChange={e => handleChange('sortBy', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-3 py-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
             >
               {sortOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -148,7 +151,7 @@ export default function TodoFilters({
                   filters.sortOrder === 'asc' ? 'desc' : 'asc'
                 )
               }
-              className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-3 py-2 border border-purple-300 rounded-md hover:bg-purple-100 transition-colors bg-white"
               title={`目前為 ${filters.sortOrder === 'asc' ? '升序' : '降序'}，點擊切換排序方向`}
             >
               {filters.sortOrder === 'asc' ? (
