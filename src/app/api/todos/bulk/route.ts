@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
-// POST /api/todos/bulk - 批量操作
+/**
+ * 批量操作
+ * @param request 請求
+ * @returns 批量操作成功或失敗
+ */
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();

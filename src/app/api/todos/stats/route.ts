@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
-// GET /api/todos/stats - 獲取 todo 統計信息
+/**
+ * 獲取 todo 統計信息
+ * @param request 請求
+ * @returns 獲取 todo 統計信息
+ */
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -14,7 +18,7 @@ export async function GET(request: NextRequest) {
     const period = searchParams.get('period') || 'all'; // all, week, month
 
     // 構建日期篩選條件
-    let dateFilter: any = {};
+    const dateFilter: { gte?: Date } = {};
     if (period === 'week') {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);

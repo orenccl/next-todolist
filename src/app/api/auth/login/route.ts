@@ -3,6 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { setSession } from '@/lib/session';
 import { verifyPassword } from '@/lib/password';
 
+/**
+ * 登入
+ * @param request 請求
+ * @returns 登入成功或失敗
+ */
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();

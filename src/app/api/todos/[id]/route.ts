@@ -3,7 +3,12 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { Priority, Prisma } from '@prisma/client';
 
-// GET /api/todos/[id] - 獲取單個 todo
+/**
+ * 獲取單個 todo
+ * @param request 請求
+ * @param params 參數
+ * @returns 單個 todo
+ */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession();
@@ -29,7 +34,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-// PUT /api/todos/[id] - 更新 todo
+/**
+ * 更新 todo
+ * @param request 請求
+ * @param params 參數
+ * @returns 更新後的 todo
+ */
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession();
@@ -94,7 +104,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-// DELETE /api/todos/[id] - 刪除 todo
+/**
+ * 刪除 todo
+ * @param request 請求
+ * @param params 參數
+ * @returns 刪除成功或失敗
+ */
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession();

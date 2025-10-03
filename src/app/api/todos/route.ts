@@ -3,7 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { Priority, Prisma } from '@prisma/client';
 
-// GET /api/todos - 獲取 todos (支持分頁、排序、篩選)
+/**
+ * 獲取 todos
+ * @param request 請求
+ * @returns 獲取 todos
+ */
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -100,7 +104,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/todos - 創建新的 todo
+/**
+ * 創建新的 todo
+ * @param request 請求
+ * @returns 創建新的 todo
+ */
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
