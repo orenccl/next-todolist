@@ -45,6 +45,8 @@ export interface TodoItemProps {
   onDelete: (id: string) => Promise<void>;
   onToggle: (id: string, isDone: boolean) => Promise<void>;
   onEdit?: (todo: TodoItem) => void;
+  isOptimistic?: boolean;
+  optimisticType?: 'toggle' | 'delete' | 'create' | 'update';
 }
 
 // TodoForm 組件 Props

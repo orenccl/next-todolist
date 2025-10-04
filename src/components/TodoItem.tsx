@@ -20,6 +20,8 @@ export default function TodoItem({
   onDelete,
   onToggle,
   onEdit,
+  isOptimistic = false,
+  optimisticType,
 }: TodoItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -50,6 +52,44 @@ export default function TodoItem({
   const isOverdue =
     todo.deadline && new Date(todo.deadline) < new Date() && !todo.isDone;
 
+  // 樂觀更新狀態的視覺指示器
+  const getOptimisticIndicator = () => {
+    if (!isOptimistic) return null;
+
+    const indicators = {
+      toggle: {
+        icon: '🔄',
+        text: '更新中...',
+        color: 'bg-blue-100 text-blue-800 border-blue-200',
+      },
+      delete: {
+        icon: '🗑️',
+        text: '刪除中...',
+        color: 'bg-red-100 text-red-800 border-red-200',
+      },
+      create: {
+        icon: '➕',
+        text: '建立中...',
+        color: 'bg-green-100 text-green-800 border-green-200',
+      },
+      update: {
+        icon: '✏️',
+        text: '編輯中...',
+        color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      },
+    };
+
+    const indicator = indicators[optimisticType || 'toggle'];
+    return (
+      <div
+        className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm border-2 ${indicator.color} animate-pulse`}
+      >
+        <span className="mr-1">{indicator.icon}</span>
+        {indicator.text}
+      </div>
+    );
+  };
+
   return (
     <div
       className={`p-6 border-2 rounded-lg shadow-lg transition-all duration-200 ${
@@ -60,7 +100,7 @@ export default function TodoItem({
             : todo.priority === 'MEDIUM'
               ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 hover:border-yellow-300 hover:shadow-xl'
               : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:border-green-300 hover:shadow-xl'
-      } ${isDeleting ? 'opacity-50' : ''}`}
+      } ${isDeleting ? 'opacity-50' : ''} ${isOptimistic ? 'ring-2 ring-blue-300 ring-opacity-50' : ''}`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-3 flex-1">
@@ -141,8 +181,10 @@ export default function TodoItem({
                   ✅ 已完成
                 </span>
               )}
-            </div>
 
+              {/* 樂觀更新指示器 */}
+              {getOptimisticIndicator()}
+            </div>
           </div>
         </div>
 

@@ -14,12 +14,20 @@ import {
 
 export default function TodoList() {
   const [todos, setTodos] = useState<TodoItemType[]>([]);
-  const [loading, setLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingTodo, setEditingTodo] = useState<TodoItemType | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // 樂觀更新狀態管理
+  const [optimisticUpdates, setOptimisticUpdates] = useState<{
+    [key: string]: {
+      type: 'toggle' | 'delete' | 'create' | 'update';
+      originalData?: TodoItemType;
+      pendingData?: Partial<TodoItemType>;
+    };
+  }>({});
 
   // 篩選和分頁狀態
   const [filters, setFilters] = useState<FilterState>({
@@ -32,7 +40,7 @@ export default function TodoList() {
 
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
-    limit: 10,
+    limit: 5,
     total: 0,
     totalPages: 0,
   });
@@ -113,7 +121,6 @@ export default function TodoList() {
         // 未認證，停止資料載入
         setDataLoading(false);
       }
-      setLoading(false); // 無論是否認證，都結束初始載入
     };
     initialize();
   }, [loadTodos]);
@@ -168,9 +175,45 @@ export default function TodoList() {
     return () => clearInterval(syncInterval);
   }, [isAuthenticated, pagination.total, loadTodos]);
 
-  // 建立新 todo
+  // 建立新 todo - 樂觀更新版本
   const handleCreateTodo = async (formData: Omit<TodoFormState, 'isDone'>) => {
+    // 1. 立即在 UI 中顯示新 todo（樂觀更新）
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
+    const optimisticTodo: TodoItemType = {
+      id: tempId,
+      title: formData.title,
+      description: formData.description || '',
+      priority: formData.priority,
+      deadline: formData.deadline ? new Date(formData.deadline) : null,
+      isDone: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: 'temp-user', // 臨時用戶 ID，會在服務器響應後被替換
+    };
+
+    // 保存樂觀更新狀態
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [tempId]: {
+        type: 'create',
+        pendingData: optimisticTodo,
+      },
+    }));
+
+    // 立即添加到本地狀態
+    setTodos(prevTodos => [optimisticTodo, ...prevTodos]);
+
+    // 更新分頁總數
+    setPagination(prev => ({
+      ...prev,
+      total: prev.total + 1,
+    }));
+
+    // 關閉表單
+    setShowForm(false);
+
     try {
+      // 2. 發送請求到服務器
       const response = await fetch('/api/todos', {
         method: 'POST',
         headers: {
@@ -183,11 +226,40 @@ export default function TodoList() {
         throw new Error('Failed to create todo');
       }
 
-      // 等待伺服器回應後重新載入資料
-      await loadTodos();
-      setShowForm(false);
+      const newTodo = await response.json();
+
+      // 3. 成功後用真實數據替換臨時數據
+      setTodos(prevTodos =>
+        prevTodos.map(todo => (todo.id === tempId ? newTodo.data : todo))
+      );
+
+      // 清除樂觀更新狀態
+      setOptimisticUpdates(prev => {
+        const newState = { ...prev };
+        delete newState[tempId];
+        return newState;
+      });
     } catch (err) {
+      // 4. 失敗時移除臨時 todo
+      setTodos(prevTodos => prevTodos.filter(todo => todo.id !== tempId));
+
+      // 恢復分頁總數
+      setPagination(prev => ({
+        ...prev,
+        total: prev.total - 1,
+      }));
+
+      // 清除樂觀更新狀態
+      setOptimisticUpdates(prev => {
+        const newState = { ...prev };
+        delete newState[tempId];
+        return newState;
+      });
+
       setError(err instanceof Error ? err.message : 'Failed to create todo');
+
+      // 重新顯示表單讓用戶重試
+      setShowForm(true);
     }
   };
 
@@ -219,9 +291,29 @@ export default function TodoList() {
     }
   };
 
-  // 切換完成狀態
+  // 切換完成狀態 - 樂觀更新版本
   const handleToggleTodo = async (id: string, isDone: boolean) => {
+    // 1. 立即更新 UI（樂觀更新）
+    const originalTodo = todos.find(todo => todo.id === id);
+    if (!originalTodo) return;
+
+    // 保存原始數據用於回滾
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [id]: {
+        type: 'toggle',
+        originalData: originalTodo,
+        pendingData: { isDone },
+      },
+    }));
+
+    // 立即更新本地狀態
+    setTodos(prevTodos =>
+      prevTodos.map(todo => (todo.id === id ? { ...todo, isDone } : todo))
+    );
+
     try {
+      // 2. 發送請求到服務器
       const response = await fetch(`/api/todos/${id}`, {
         method: 'PUT',
         headers: {
@@ -235,17 +327,56 @@ export default function TodoList() {
         throw new Error(errorData.error || 'Failed to toggle todo');
       }
 
-      // 等待伺服器回應後重新載入資料
-      await loadTodos();
+      // 3. 成功後清除樂觀更新狀態
+      setOptimisticUpdates(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
     } catch (err) {
+      // 4. 失敗時回滾到原始狀態
+      setTodos(prevTodos =>
+        prevTodos.map(todo => (todo.id === id ? originalTodo : todo))
+      );
+
+      // 清除樂觀更新狀態
+      setOptimisticUpdates(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
+
       setError(err instanceof Error ? err.message : 'Failed to toggle todo');
       console.error('Toggle todo failed:', err);
     }
   };
 
-  // 刪除 todo
+  // 刪除 todo - 樂觀更新版本
   const handleDeleteTodo = async (id: string) => {
+    // 1. 立即從 UI 中移除（樂觀更新）
+    const originalTodo = todos.find(todo => todo.id === id);
+    if (!originalTodo) return;
+
+    // 保存原始數據用於回滾
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [id]: {
+        type: 'delete',
+        originalData: originalTodo,
+      },
+    }));
+
+    // 立即從本地狀態中移除
+    setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+
+    // 更新分頁總數
+    setPagination(prev => ({
+      ...prev,
+      total: prev.total - 1,
+    }));
+
     try {
+      // 2. 發送請求到服務器
       const response = await fetch(`/api/todos/${id}`, {
         method: 'DELETE',
       });
@@ -255,9 +386,43 @@ export default function TodoList() {
         throw new Error(errorData.error || 'Failed to delete todo');
       }
 
-      // 等待伺服器回應後重新載入資料
-      await loadTodos();
+      // 3. 成功後清除樂觀更新狀態
+      setOptimisticUpdates(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
     } catch (err) {
+      // 4. 失敗時恢復原始狀態
+      setTodos(prevTodos => {
+        // 將原始 todo 重新插入到正確位置
+        const newTodos = [...prevTodos];
+        const insertIndex = newTodos.findIndex(
+          todo => new Date(todo.createdAt) > new Date(originalTodo.createdAt)
+        );
+
+        if (insertIndex === -1) {
+          newTodos.push(originalTodo);
+        } else {
+          newTodos.splice(insertIndex, 0, originalTodo);
+        }
+
+        return newTodos;
+      });
+
+      // 恢復分頁總數
+      setPagination(prev => ({
+        ...prev,
+        total: prev.total + 1,
+      }));
+
+      // 清除樂觀更新狀態
+      setOptimisticUpdates(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
+
       setError(err instanceof Error ? err.message : 'Failed to delete todo');
       console.error('Delete todo failed:', err);
     }
@@ -392,6 +557,8 @@ export default function TodoList() {
                   onDelete={handleDeleteTodo}
                   onToggle={handleToggleTodo}
                   onEdit={setEditingTodo}
+                  isOptimistic={!!optimisticUpdates[todo.id]}
+                  optimisticType={optimisticUpdates[todo.id]?.type}
                 />
               ))
             )}

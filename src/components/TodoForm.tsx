@@ -55,15 +55,8 @@ export default function TodoForm({
       newErrors.title = '標題是必填的';
     }
 
-    if (formData.deadline) {
-      const deadlineDate = new Date(formData.deadline);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (deadlineDate < today) {
-        newErrors.deadline = '截止日期不能是過去的日期';
-      }
-    }
+    // 移除截止日期的過去日期限制
+    // 用戶可以設置任何日期，包括過去的日期
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
