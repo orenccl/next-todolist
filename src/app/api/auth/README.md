@@ -14,7 +14,7 @@
 {
   "email": "user@example.com",
   "password": "password123",
-  "name": "John Doe" // 可選
+  "name": "John Doe"
 }
 ```
 

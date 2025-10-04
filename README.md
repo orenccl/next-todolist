@@ -4,6 +4,20 @@
 
 🌐 **線上預覽**: [https://next-todolist-zeta.vercel.app/](https://next-todolist-zeta.vercel.app/)
 
+## AI應用聲明
+
+本專案是由 我本人與生成式 AI 工具（Cursor/ChatGPT）密切合作完成。
+
+程式碼產生與重構：我透過 AI 生成初始程式架構（如 CRUD API、Prisma 資料庫 Schema、分頁工具程式），並在必要時請 AI 協助進行程式碼重構。
+
+問題解決與除錯：遇到框架或工具上的技術問題（例如 Next.js Route Handler、Prisma Migration、即時分頁更新），我與 AI 討論可能的解法，最後由我進行測試與整合。
+
+文件撰寫與說明：AI 協助我整理與潤飾 README 說明、技術細節解釋，以及範例使用方式，讓專案文件更完整。
+
+人類主導：所有 架構設計、AI 產出內容的審核與修改、功能整合、效能優化、最後驗證 都是由我完成。AI 僅作為「協作夥伴」，而非自動完成的工具。
+
+簡而言之，這是一個 人類與 AI 共同創作的專案。AI 在部分環節加速了開發流程，但最終的設計判斷、品質把關與成果完成，均由我本人負責。
+
 ## 🚀 功能特色
 
 ### 身份驗證系統
@@ -61,8 +75,7 @@ src/
 │   ├── prisma.ts          # 資料庫連接
 │   ├── session.ts         # 會話管理
 │   └── password.ts        # 密碼處理
-├── types/                 # TypeScript 類型定義
-└── shared/               # 共享資源
+└── types/                 # TypeScript 類型定義
 ```
 
 ## 🚀 快速開始
@@ -70,16 +83,12 @@ src/
 ### 環境需求
 
 - Node.js 18+
-- npm/yarn/pnpm
+- npm
 
 ### 安裝依賴
 
 ```bash
 npm install
-# 或
-yarn install
-# 或
-pnpm install
 ```
 
 ### 資料庫設定
@@ -101,10 +110,6 @@ npx prisma studio
 
 ```bash
 npm run dev
-# 或
-yarn dev
-# 或
-pnpm dev
 ```
 
 開啟 [http://localhost:3000](http://localhost:3000) 查看應用程式。
@@ -146,7 +151,14 @@ npx prisma migrate reset
 ### 程式碼檢查
 
 ```bash
+# ESLint 檢查
 npm run lint
+
+# 程式碼格式化
+npm run format
+
+# 檢查格式化狀態
+npm run format:check
 ```
 
 ### 建構生產版本
@@ -169,12 +181,9 @@ npm run build
 創建 `.env.local` 檔案：
 
 ```env
+# 資料庫連接
 DATABASE_URL="postgresql://username:password@localhost:5432/todolist"
 ```
-
-## 🤝 貢獻
-
-歡迎提交 Issue 和 Pull Request！
 
 ## 📄 授權
 
