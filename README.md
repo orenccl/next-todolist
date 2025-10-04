@@ -22,12 +22,6 @@
 - 搜尋和篩選功能
 - 分頁支援
 
-### 批量操作
-
-- 批量標記完成/未完成
-- 批量刪除
-- 高效的多項目操作
-
 ### 統計分析
 
 - 完成率統計
@@ -58,7 +52,6 @@ src/
 │   │   │   └── me/
 │   │   └── todos/          # 待辦事項 API
 │   │       ├── [id]/
-│   │       ├── bulk/
 │   │       └── stats/
 │   ├── globals.css
 │   ├── layout.tsx
@@ -134,7 +127,6 @@ pnpm dev
 - `GET /api/todos/[id]` - 獲取單個待辦事項
 - `PUT /api/todos/[id]` - 更新待辦事項
 - `DELETE /api/todos/[id]` - 刪除待辦事項
-- `POST /api/todos/bulk` - 批量操作
 - `GET /api/todos/stats` - 獲取統計資訊
 
 詳細文檔請參考：[待辦事項 API 文檔](./src/app/api/todos/README.md)

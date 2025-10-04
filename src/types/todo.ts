@@ -88,14 +88,6 @@ export interface TodoStats {
 }
 
 /**
- * 批量操作型別
- */
-export interface BulkActionInput {
-  action: 'markComplete' | 'markIncomplete' | 'delete';
-  todoIds: string[];
-}
-
-/**
  * 排序選項
  */
 export type SortBy =
