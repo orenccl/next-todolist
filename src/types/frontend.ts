@@ -1,13 +1,17 @@
 import { Priority, TodoResponse } from './todo';
 
-// 前端專用的 Todo 型別
+/**
+ * 前端專用的待辦事項型別
+ */
 export interface TodoItem extends TodoResponse {
   // 可以添加前端特有的屬性
   isEditing?: boolean;
   isDeleting?: boolean;
 }
 
-// Todo 表單狀態
+/**
+ * 待辦事項表單狀態
+ */
 export interface TodoFormState {
   title: string;
   description: string;
@@ -33,12 +37,9 @@ export interface PaginationState {
   totalPages: number;
 }
 
-// TodoList 組件 Props（目前不需要額外的 props）
-// export interface TodoListProps {
-//   // 可以根據需要擴展
-// }
-
-// TodoItem 組件 Props
+/**
+ * 待辦事項項目組件 Props
+ */
 export interface TodoItemProps {
   todo: TodoItem;
   onUpdate: (id: string, updates: Partial<TodoFormState>) => Promise<void>;
@@ -49,7 +50,9 @@ export interface TodoItemProps {
   optimisticType?: 'toggle' | 'delete' | 'create' | 'update';
 }
 
-// TodoForm 組件 Props
+/**
+ * 待辦事項表單組件 Props
+ */
 export interface TodoFormProps {
   onSubmit: (data: Omit<TodoFormState, 'isDone'>) => Promise<void>;
   onCancel?: () => void;
@@ -57,7 +60,9 @@ export interface TodoFormProps {
   isEditing?: boolean;
 }
 
-// TodoFilters 組件 Props
+/**
+ * 待辦事項篩選器組件 Props
+ */
 export interface TodoFiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: Partial<FilterState>) => void;

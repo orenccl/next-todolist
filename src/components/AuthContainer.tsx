@@ -15,7 +15,7 @@ export default function AuthContainer({ onLogin }: AuthContainerProps) {
   const handleLogin = (userData: UserPublic) => {
     // 觸發認證狀態變化事件
     window.dispatchEvent(new CustomEvent('authStateChanged'));
-    // 調用父組件的 onLogin 回調
+    // 調用父組件的登入回調
     if (onLogin) {
       onLogin(userData);
     }

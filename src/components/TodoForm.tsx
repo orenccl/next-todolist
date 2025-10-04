@@ -55,9 +55,6 @@ export default function TodoForm({
       newErrors.title = '標題是必填的';
     }
 
-    // 移除截止日期的過去日期限制
-    // 用戶可以設置任何日期，包括過去的日期
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

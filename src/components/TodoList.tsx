@@ -10,7 +10,6 @@ import {
   PaginationState,
   TodoFormState,
 } from '@/types/frontend';
-// import { Priority } from '@/types/todo';
 
 export default function TodoList() {
   const [todos, setTodos] = useState<TodoItemType[]>([]);
@@ -19,8 +18,12 @@ export default function TodoList() {
   const [showForm, setShowForm] = useState(false);
   const [editingTodo, setEditingTodo] = useState<TodoItemType | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // 樂觀更新狀態管理
+  /**
+   * 樂觀更新狀態管理
+   * 追蹤正在進行的樂觀更新操作
+   */
   const [optimisticUpdates, setOptimisticUpdates] = useState<{
     [key: string]: {
       type: 'toggle' | 'delete' | 'create' | 'update';
@@ -29,7 +32,9 @@ export default function TodoList() {
     };
   }>({});
 
-  // 篩選和分頁狀態
+  /**
+   * 篩選和分頁狀態
+   */
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     priority: 'ALL',
@@ -45,7 +50,10 @@ export default function TodoList() {
     totalPages: 0,
   });
 
-  // 檢查認證狀態
+  /**
+   * 檢查認證狀態
+   * @returns {Promise<boolean>} 是否已認證
+   */
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/me');
@@ -53,18 +61,24 @@ export default function TodoList() {
         const data = await response.json();
         if (data.success) {
           setIsAuthenticated(true);
+          setCurrentUserId(data.user.id);
           return true;
         }
       }
       setIsAuthenticated(false);
+      setCurrentUserId(null);
       return false;
     } catch {
       setIsAuthenticated(false);
+      setCurrentUserId(null);
       return false;
     }
   };
 
-  // 載入 todos
+  /**
+   * 載入待辦事項
+   * 根據當前篩選條件和分頁設定載入待辦事項列表
+   */
   const loadTodos = useCallback(async () => {
     try {
       setDataLoading(true);
@@ -137,13 +151,12 @@ export default function TodoList() {
     const handleAuthChange = async () => {
       const auth = await checkAuth();
       if (auth && !isAuthenticated) {
-        // 用戶剛剛登入，重新載入 todos
+        // 用戶剛剛登入，重新載入待辦事項
         setDataLoading(true);
         loadTodos();
       }
     };
 
-    // 監聽自定義事件
     window.addEventListener('authStateChanged', handleAuthChange);
 
     return () => {
@@ -157,13 +170,11 @@ export default function TodoList() {
 
     const syncInterval = setInterval(async () => {
       try {
-        // 只在背景中進行輕量級同步檢查
         const response = await fetch('/api/todos/stats');
         if (response.ok) {
           const stats = await response.json();
           // 如果總數差異很大，重新載入資料
           if (Math.abs(stats.data.total - pagination.total) > 2) {
-            console.log('Detected data inconsistency, reloading...');
             loadTodos();
           }
         }
@@ -175,9 +186,12 @@ export default function TodoList() {
     return () => clearInterval(syncInterval);
   }, [isAuthenticated, pagination.total, loadTodos]);
 
-  // 建立新 todo - 樂觀更新版本
+  /**
+   * 建立新待辦事項 - 樂觀更新版本
+   * @param {Omit<TodoFormState, 'isDone'>} formData - 表單數據
+   */
   const handleCreateTodo = async (formData: Omit<TodoFormState, 'isDone'>) => {
-    // 1. 立即在 UI 中顯示新 todo（樂觀更新）
+    // 1. 立即在 UI 中顯示新待辦事項（樂觀更新）
     const tempId = `temp-${Date.now()}-${Math.random()}`;
     const optimisticTodo: TodoItemType = {
       id: tempId,
@@ -188,7 +202,7 @@ export default function TodoList() {
       isDone: false,
       createdAt: new Date(),
       updatedAt: new Date(),
-      userId: 'temp-user', // 臨時用戶 ID，會在服務器響應後被替換
+      userId: currentUserId || 'temp-user', // 使用當前用戶 ID
     };
 
     // 保存樂觀更新狀態
@@ -240,7 +254,7 @@ export default function TodoList() {
         return newState;
       });
     } catch (err) {
-      // 4. 失敗時移除臨時 todo
+      // 4. 失敗時移除臨時待辦事項
       setTodos(prevTodos => prevTodos.filter(todo => todo.id !== tempId));
 
       // 恢復分頁總數
@@ -263,7 +277,11 @@ export default function TodoList() {
     }
   };
 
-  // 更新 todo
+  /**
+   * 更新待辦事項
+   * @param {string} id - 待辦事項 ID
+   * @param {Partial<TodoFormState>} updates - 更新數據
+   */
   const handleUpdateTodo = async (
     id: string,
     updates: Partial<TodoFormState>
@@ -291,7 +309,11 @@ export default function TodoList() {
     }
   };
 
-  // 切換完成狀態 - 樂觀更新版本
+  /**
+   * 切換完成狀態 - 樂觀更新版本
+   * @param {string} id - 待辦事項 ID
+   * @param {boolean} isDone - 是否完成
+   */
   const handleToggleTodo = async (id: string, isDone: boolean) => {
     // 1. 立即更新 UI（樂觀更新）
     const originalTodo = todos.find(todo => todo.id === id);
@@ -351,7 +373,10 @@ export default function TodoList() {
     }
   };
 
-  // 刪除 todo - 樂觀更新版本
+  /**
+   * 刪除待辦事項 - 樂觀更新版本
+   * @param {string} id - 待辦事項 ID
+   */
   const handleDeleteTodo = async (id: string) => {
     // 1. 立即從 UI 中移除（樂觀更新）
     const originalTodo = todos.find(todo => todo.id === id);
@@ -395,7 +420,7 @@ export default function TodoList() {
     } catch (err) {
       // 4. 失敗時恢復原始狀態
       setTodos(prevTodos => {
-        // 將原始 todo 重新插入到正確位置
+        // 將原始待辦事項重新插入到正確位置
         const newTodos = [...prevTodos];
         const insertIndex = newTodos.findIndex(
           todo => new Date(todo.createdAt) > new Date(originalTodo.createdAt)
@@ -468,9 +493,7 @@ export default function TodoList() {
           <h3 className="text-lg font-semibold text-gray-900 mb-1">
             ⚡ 快速操作
           </h3>
-          <p className="text-sm text-gray-600">
-            快速新增和管理您的待辦事項
-          </p>
+          <p className="text-sm text-gray-600">快速新增和管理您的待辦事項</p>
         </div>
         <div className="flex items-center justify-end">
           <button

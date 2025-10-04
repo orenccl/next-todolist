@@ -1,12 +1,18 @@
 import { Priority, Todo } from '@prisma/client';
 
-// 重新導出 Prisma 型別
+/**
+ * 重新導出 Prisma 型別
+ */
 export type { Priority, Todo };
 
-// 基礎 Todo 型別（不包含關聯）
+/**
+ * 基礎 Todo 型別（不包含關聯）
+ */
 export type TodoBase = Omit<Todo, 'user'>;
 
-// 建立 Todo 時的輸入型別
+/**
+ * 建立 Todo 時的輸入型別
+ */
 export interface CreateTodoInput {
   title: string;
   description?: string | null;
@@ -15,7 +21,9 @@ export interface CreateTodoInput {
   isDone?: boolean;
 }
 
-// 更新 Todo 時的輸入型別
+/**
+ * 更新 Todo 時的輸入型別
+ */
 export interface UpdateTodoInput {
   title?: string;
   description?: string | null;
@@ -24,7 +32,9 @@ export interface UpdateTodoInput {
   isDone?: boolean;
 }
 
-// 初始 Todo 數據型別（用於建立初始數據）
+/**
+ * 初始 Todo 數據型別（用於建立初始數據）
+ */
 export interface InitialTodoData {
   title: string;
   description: string | null;
@@ -33,7 +43,9 @@ export interface InitialTodoData {
   isDone: boolean;
 }
 
-// API 回應型別
+/**
+ * API 回應型別
+ */
 export interface TodoResponse {
   id: string;
   title: string;
@@ -46,7 +58,9 @@ export interface TodoResponse {
   userId: string;
 }
 
-// 分頁回應型別
+/**
+ * 分頁回應型別
+ */
 export interface PaginatedResponse<T> {
   data: T[];
   pagination: {
@@ -57,7 +71,9 @@ export interface PaginatedResponse<T> {
   };
 }
 
-// 統計數據型別
+/**
+ * 統計數據型別
+ */
 export interface TodoStats {
   total: number;
   completed: number;
@@ -71,13 +87,17 @@ export interface TodoStats {
   overdueCount: number;
 }
 
-// 批量操作型別
+/**
+ * 批量操作型別
+ */
 export interface BulkActionInput {
   action: 'markComplete' | 'markIncomplete' | 'delete';
   todoIds: string[];
 }
 
-// 排序選項
+/**
+ * 排序選項
+ */
 export type SortBy =
   | 'createdAt'
   | 'updatedAt'
@@ -86,7 +106,9 @@ export type SortBy =
   | 'title';
 export type SortOrder = 'asc' | 'desc';
 
-// 篩選選項
+/**
+ * 篩選選項
+ */
 export interface TodoFilters {
   priority?: Priority;
   isDone?: boolean;
