@@ -74,6 +74,7 @@ export async function GET(request: NextRequest) {
     // 構建排序條件
     const validSortFields = [
       'createdAt',
+      'updatedAt',
       'title',
       'priority',
       'deadline',
