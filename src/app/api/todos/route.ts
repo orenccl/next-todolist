@@ -151,12 +151,16 @@ export async function POST(request: NextRequest) {
     // 驗證截止日期
     let deadlineDate = null;
     if (deadline) {
-      deadlineDate = new Date(deadline);
-      if (isNaN(deadlineDate.getTime())) {
-        return NextResponse.json(
-          { error: 'Invalid deadline format' },
-          { status: 400 }
-        );
+      const deadlineStr =
+        typeof deadline === 'string' ? deadline : deadline.toISOString();
+      if (deadlineStr.trim() !== '') {
+        deadlineDate = new Date(deadlineStr);
+        if (isNaN(deadlineDate.getTime())) {
+          return NextResponse.json(
+            { error: 'Invalid deadline format' },
+            { status: 400 }
+          );
+        }
       }
     }
 

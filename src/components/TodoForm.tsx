@@ -16,11 +16,18 @@ export default function TodoForm({
   initialData,
   isEditing = false,
 }: TodoFormProps) {
+  // 獲取明天的日期
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     priority: 'MEDIUM' as Priority,
-    deadline: '',
+    deadline: getTomorrowDate(),
   });
 
   const [loading, setLoading] = useState(false);
@@ -36,7 +43,7 @@ export default function TodoForm({
         priority: initialData.priority || 'MEDIUM',
         deadline: initialData.deadline
           ? new Date(initialData.deadline).toISOString().split('T')[0]
-          : '',
+          : getTomorrowDate(),
       });
     }
   }, [initialData]);
@@ -53,6 +60,10 @@ export default function TodoForm({
 
     if (!formData.title.trim()) {
       newErrors.title = '標題是必填的';
+    }
+
+    if (!formData.deadline.trim()) {
+      newErrors.deadline = '截止日期是必填的';
     }
 
     setErrors(newErrors);
@@ -72,9 +83,7 @@ export default function TodoForm({
         ...formData,
         title: formData.title.trim(),
         description: formData.description.trim() || '',
-        deadline: formData.deadline
-          ? new Date(formData.deadline).toISOString()
-          : '',
+        deadline: new Date(formData.deadline).toISOString(),
       };
 
       await onSubmit(submitData);

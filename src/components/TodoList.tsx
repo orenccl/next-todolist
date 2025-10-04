@@ -164,28 +164,6 @@ export default function TodoList() {
     };
   }, [isAuthenticated, loadTodos]);
 
-  // 定期同步機制：每30秒檢查一次資料一致性
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const syncInterval = setInterval(async () => {
-      try {
-        const response = await fetch('/api/todos/stats');
-        if (response.ok) {
-          const stats = await response.json();
-          // 如果總數差異很大，重新載入資料
-          if (Math.abs(stats.data.total - pagination.total) > 2) {
-            loadTodos();
-          }
-        }
-      } catch (error) {
-        console.log('Background sync failed:', error);
-      }
-    }, 30000); // 30秒
-
-    return () => clearInterval(syncInterval);
-  }, [isAuthenticated, pagination.total, loadTodos]);
-
   /**
    * 建立新待辦事項 - 樂觀更新版本
    * @param {Omit<TodoFormState, 'isDone'>} formData - 表單數據
@@ -240,12 +218,10 @@ export default function TodoList() {
         throw new Error('Failed to create todo');
       }
 
-      const newTodo = await response.json();
+      await response.json();
 
-      // 3. 成功後用真實數據替換臨時數據
-      setTodos(prevTodos =>
-        prevTodos.map(todo => (todo.id === tempId ? newTodo.data : todo))
-      );
+      // 3. 成功後重新載入數據以確保分頁正確
+      loadTodos();
 
       // 清除樂觀更新狀態
       setOptimisticUpdates(prev => {
@@ -349,12 +325,15 @@ export default function TodoList() {
         throw new Error(errorData.error || 'Failed to toggle todo');
       }
 
-      // 3. 成功後清除樂觀更新狀態
+      // 3. 成功後清除樂觀更新狀態並重新載入數據
       setOptimisticUpdates(prev => {
         const newState = { ...prev };
         delete newState[id];
         return newState;
       });
+
+      // 重新載入數據以確保統計數據同步
+      loadTodos();
     } catch (err) {
       // 4. 失敗時回滾到原始狀態
       setTodos(prevTodos =>
@@ -417,6 +396,9 @@ export default function TodoList() {
         delete newState[id];
         return newState;
       });
+
+      // 刪除成功後，立即重新載入數據以確保狀態一致
+      loadTodos();
     } catch (err) {
       // 4. 失敗時恢復原始狀態
       setTodos(prevTodos => {
