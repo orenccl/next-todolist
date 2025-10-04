@@ -464,15 +464,15 @@ export default function TodoList() {
 
       {/* 操作區域卡片 */}
       <div className="bg-white rounded-lg shadow-lg border mb-6 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-1">
-              📝 待辦事項管理
-            </h2>
-            <p className="text-sm text-gray-600">
-              管理您的任務，追蹤進度，提高生產力
-            </p>
-          </div>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+            ⚡ 快速操作
+          </h3>
+          <p className="text-sm text-gray-600">
+            快速新增和管理您的待辦事項
+          </p>
+        </div>
+        <div className="flex items-center justify-end">
           <button
             onClick={() => setShowForm(true)}
             className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -568,7 +568,7 @@ export default function TodoList() {
 
       {/* 分頁 */}
       {pagination.totalPages > 1 && (
-        <div className="mt-6 bg-white rounded-lg shadow-lg border p-4">
+        <div className="mt-6 bg-white rounded-lg shadow-lg border p-6">
           <div className="flex justify-center items-center space-x-4">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}

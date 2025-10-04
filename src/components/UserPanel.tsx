@@ -59,49 +59,59 @@ export default function UserPanel() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border">
-      {/* 內容區域 */}
-      <div className="p-6">
-        {/* 時間範圍選擇 */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">
-            📊 統計概覽
+    <div className="max-w-6xl mx-auto p-6">
+      {/* 時間範圍選擇卡片 */}
+      <div className="bg-white rounded-lg shadow-lg border mb-6 p-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+            🔍 時間範圍選擇
           </h3>
-          <div className="flex space-x-2">
-            {(['all', 'week', 'month'] as const).map(p => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  period === p
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {periodLabels[p]}
-              </button>
-            ))}
-          </div>
+          <p className="text-sm text-gray-600">選擇要查看統計數據的時間範圍</p>
         </div>
-
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <span className="ml-2 text-gray-600">載入統計中...</span>
-          </div>
-        ) : error ? (
-          <div className="text-center py-12 text-red-600">
-            <p>載入統計失敗: {error}</p>
+        <div className="flex space-x-2">
+          {(['all', 'week', 'month'] as const).map(p => (
             <button
-              onClick={fetchStats}
-              className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                period === p
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
-              重試
+              {periodLabels[p]}
             </button>
-          </div>
-        ) : stats ? (
-          <div className="space-y-6">
-            {/* 主要統計卡片 */}
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <span className="ml-2 text-gray-600">載入統計中...</span>
+        </div>
+      ) : error ? (
+        <div className="text-center py-12 text-red-600">
+          <p>載入統計失敗: {error}</p>
+          <button
+            onClick={fetchStats}
+            className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            重試
+          </button>
+        </div>
+      ) : stats ? (
+        <div>
+          {/* 主要統計卡片 */}
+          <div className="bg-white rounded-lg shadow-lg border mb-6 p-6">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                📊 統計概覽
+              </h3>
+              <p className="text-sm text-gray-600">
+                查看您的任務統計數據和完成情況
+              </p>
+            </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-blue-100 p-4 rounded-lg border-2 border-blue-200">
                 <div className="flex items-center">
@@ -157,8 +167,18 @@ export default function UserPanel() {
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* 完成率和優先級分佈 */}
+          {/* 完成率和優先級分佈卡片 */}
+          <div className="bg-white rounded-lg shadow-lg border mb-6 p-6">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                📈 詳細分析
+              </h3>
+              <p className="text-sm text-gray-600">
+                查看完成率和優先級分佈情況
+              </p>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* 完成率 */}
               <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
@@ -213,50 +233,55 @@ export default function UserPanel() {
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* 最近任務 */}
-            {stats.recentTodos.length > 0 && (
-              <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+          {/* 最近任務卡片 */}
+          {stats.recentTodos.length > 0 && (
+            <div className="bg-white rounded-lg shadow-lg border mb-6 p-6">
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
                   🕒 最近任務
                 </h3>
-                <div className="space-y-2">
-                  {stats.recentTodos.map(todo => (
-                    <div
-                      key={todo.id}
-                      className="flex items-center justify-between p-2 bg-white rounded-md"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            todo.priority === 'HIGH'
-                              ? 'bg-red-500'
-                              : todo.priority === 'MEDIUM'
-                                ? 'bg-yellow-500'
-                                : 'bg-green-500'
-                          }`}
-                        ></span>
-                        <span
-                          className={`text-sm ${
-                            todo.isDone
-                              ? 'line-through text-gray-500'
-                              : 'text-gray-900'
-                          }`}
-                        >
-                          {todo.title}
-                        </span>
-                      </div>
-                      <span className="text-xs text-gray-500">
-                        {new Date(todo.createdAt).toLocaleDateString()}
+                <p className="text-sm text-gray-600">
+                  查看您最近的任務活動記錄
+                </p>
+              </div>
+              <div className="space-y-2">
+                {stats.recentTodos.map(todo => (
+                  <div
+                    key={todo.id}
+                    className="flex items-center justify-between p-2 bg-white rounded-md"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          todo.priority === 'HIGH'
+                            ? 'bg-red-500'
+                            : todo.priority === 'MEDIUM'
+                              ? 'bg-yellow-500'
+                              : 'bg-green-500'
+                        }`}
+                      ></span>
+                      <span
+                        className={`text-sm ${
+                          todo.isDone
+                            ? 'line-through text-gray-500'
+                            : 'text-gray-900'
+                        }`}
+                      >
+                        {todo.title}
                       </span>
                     </div>
-                  ))}
-                </div>
+                    <span className="text-xs text-gray-500">
+                      {new Date(todo.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        ) : null}
-      </div>
+            </div>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
